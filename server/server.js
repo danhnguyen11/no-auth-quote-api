@@ -52,6 +52,18 @@ app.get('/quotes/:id', (req,res) => {
     });
 })
 
+app.get('/rand', (req,res) => {
+    Quote.count().exec((e, count) => {
+        var random = Math.floor(Math.random() * count)
+
+        Quote.findOne().skip(random).exec((e,quote) => {
+            res.send({
+                quote
+            })
+        });
+    });
+})
+
 app.listen(port, () => {
     console.log(`Started on port ${port}`);
 })
