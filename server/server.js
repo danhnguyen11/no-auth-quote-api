@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const { ObjectID } = require('mongodb');
 
 var { mongoose } = require('./db/mongoose');
@@ -9,6 +10,7 @@ var { Quote } = require('./models/quote');
 var app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors())
 app.use(bodyParser.json());
 
 app.post('/quotes', (req,res) => {
