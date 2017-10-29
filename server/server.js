@@ -1,6 +1,7 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var { ObjectID } = require('mongodb');
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');
+const { ObjectID } = require('mongodb');
 
 var { mongoose } = require('./db/mongoose');
 var { Quote } = require('./models/quote');
@@ -62,6 +63,43 @@ app.get('/rand', (req,res) => {
             })
         });
     });
+})
+
+app.delete('/quotes/:id', (req,res) => {
+    var id = req.params.id;
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Quote.findByIdAndRemove(id).then((quote) => {
+        if(!quote){
+            return res.status(404).send();
+        } 
+
+        res.send(quote)
+    }).catch ((e) => {
+        res.status(400).send(e);
+    });
+})
+
+app.patch('/quotes/:id', (req,res) => {
+    var id = req.params.id;
+    var body =_.pick(req.body,['content','author']);
+
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send();
+    }
+
+    Quote.findByIdAndUpdate(id, {$set:body}, {new: true}).then((quote) => {
+        if(!quote){
+            return res.status(404).send();
+        }
+
+        res.send(quote)
+    }).catch ((e) => {
+        res.status(400).send(e);
+    });    
 })
 
 app.listen(port, () => {
